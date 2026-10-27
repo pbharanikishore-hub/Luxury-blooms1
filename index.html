@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="ta" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Blooms | Enterprise Floral POS & Voice Management Suite</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: {
+                            950: '#050A18',
+                            900: '#0A1128',
+                            850: '#0C1636',
+                            800: '#101F42',
+                            750: '#152857',
+                            700: '#1C326E',
+                            600: '#284699',
+                            500: '#3B60C8',
+                        },
+                        amberGold: {
+                            300: '#FDE68A',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                        },
+                        royalNavy: {
+                            400: '#60A5FA',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            800: '#1E40AF',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+                        display: ['"Plus Jakarta Sans"', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'soundwave': 'soundwave 1s infinite ease-in-out',
+                        'shake': 'shake 0.4s ease-in-out',
+                        'float-soft': 'floatSoft 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(245, 158, 11, 0.25)' },
+                            '50%': { boxShadow: '0 0 32px rgba(245, 158, 11, 0.55)' }
+                        },
+                        soundwave: {
+                            '0%, 100%': { height: '6px' },
+                            '50%': { height: '24px' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-8px)' },
+                            '40%, 80%': { transform: 'translateX(8px)' }
+                        },
+                        floatSoft: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Tamil', sans-serif;
+            background-color: #050A18;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+        .heading-font {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(12, 22, 54, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(251, 191, 36, 0.16);
+        }
+        .glass-panel-accent {
+            background: linear-gradient(135deg, rgba(21, 40, 87, 0.85) 0%, rgba(10, 17, 40, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .field-recognized {
+            border-color: #10B981 !important;
+            background-color: rgba(16, 185, 129, 0.18) !important;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.5) !important;
+            transition: all 0.35s ease;
+        }
+        .field-listening {
+            border-color: #F59E0B !important;
+            box-shadow: 0 0 18px rgba(245, 158, 11, 0.5) !important;
+            background-color: rgba(245, 158, 11, 0.08) !important;
+        }
+        .tech-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-invoice-card, #printable-invoice-card * { visibility: visible; }
+            #printable-invoice-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="tech-grid-pattern min-h-screen flex flex-col relative selection:bg-amberGold-500 selection:text-midnight-950">
+
+    <!-- FLOATING PETAL CANVAS EFFECT -->
+    <div id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- NOTIFICATION TOAST WRAPPER -->
+    <div id="toast-wrapper" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+    <!-- ==================== OFFICIAL BILL / TAX INVOICE MODAL ==================== -->
+    <div id="invoice-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div id="printable-invoice-card" class="glass-panel-accent rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-amberGold-400/60 shadow-2xl relative text-slate-100">
+            <!-- Close Button -->
+            <button onclick="closeInvoiceModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Brand Header -->
+            <div class="text-center pb-5 border-b border-slate-700/80">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-amberGold-500 via-amberGold-400 to-royalNavy-600 flex items-center justify-center text-2xl mb-2 text-midnight-950 font-black shadow-lg shadow-amberGold-500/25">
+                    💐
+                </div>
+                <h3 class="text-2xl font-black heading-font text-white tracking-wide">LUXURY BLOOMS</h3>
+                <p class="text-xs text-amberGold-400 tracking-widest font-semibold uppercase">Exotic Florals & Premium Botanicals</p>
+                <div class="mt-3 inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-midnight-950/80 border border-amberGold-500/40">
+                    <span class="text-xs font-mono text-slate-300">TAX INVOICE / CASH BILL</span>
+                    <span class="text-slate-600">|</span>
+                    <span id="modal-bill-no" class="text-xs font-mono font-bold text-amberGold-300">Bill No: LB-1001</span>
+                </div>
+            </div>
+
+            <!-- Receipt Meta Details -->
+            <div class="py-5 space-y-3.5 text-xs sm:text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Date & Issue Time:</span>
+                    <span id="modal-bill-date" class="font-semibold text-slate-200"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Sequential Serial No:</span>
+                    <span id="modal-serial-no" class="font-bold text-royalNavy-400 font-mono"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Customer Name:</span>
+                    <span id="modal-bill-client" class="font-bold text-white text-sm"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Customer Phone:</span>
+                    <span id="modal-bill-phone" class="font-mono text-slate-300 font-semibold"></span>
+                </div>
+
+                <!-- Itemized Breakdown Box -->
+                <div class="p-3.5 rounded-2xl bg-midnight-950/90 border border-slate-800 space-y-2 mt-2">
+                    <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800/80 pb-1.5 font-bold">
+                        <span>Ordered Flower & Variety</span>
+                        <span>Quantity</span>
+                        <span>Amount</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span id="modal-bill-item" class="font-bold text-amberGold-300"></span>
+                        <span id="modal-bill-qty" class="font-mono text-slate-200 font-bold"></span>
+                        <span id="modal-bill-item-total" class="font-mono text-white font-bold"></span>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-700/80 pt-3 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase tracking-wider block font-bold">Total Amount Payable</span>
+                        <span class="text-[10px] text-emerald-400 font-medium">Payment Status: Confirmed & Paid</span>
+                    </div>
+                    <span id="modal-bill-grand-total" class="text-2xl font-black text-amberGold-400 font-mono">₹0</span>
+                </div>
+
+                <div class="text-center pt-2 text-[11px] text-slate-400 italic">
+                    🌸 Thank you for blooming with us! Visit again. 🌸
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="no-print pt-4 border-t border-slate-800 flex gap-3">
+                <button onclick="window.print()" class="flex-1 py-3 bg-gradient-to-r from-royalNavy-600 to-royalNavy-700 hover:from-royalNavy-500 hover:to-royalNavy-600 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-royalNavy-900/30 transition">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print Bill / ரசீது அச்சிடுக</span>
+                </button>
+                <button onclick="closeInvoiceModal()" class="py-3 px-5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold text-xs transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION WRAPPER -->
+    <div id="app" class="relative z-10 flex-1 flex flex-col">
+
+        <!-- ==================== HEADER (Post-Login) ==================== -->
+        <header id="main-header" class="hidden sticky top-0 z-40 bg-midnight-950/85 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Brand -->
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('dashboard')">
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amberGold-500 via-amberGold-400 to-royalNavy-600 flex items-center justify-center text-midnight-950 text-xl font-black shadow-lg shadow-amberGold-500/25 transform hover:scale-105 transition">
+                            🌻
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="heading-font text-xl sm:text-2xl font-extrabold tracking-tight text-white">LUXURY</span>
+                                <span class="heading-font text-xl sm:text-2xl font-extrabold tracking-tight text-amberGold-400">BLOOMS</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-amberGold-500/20 text-amberGold-400 border border-amberGold-500/30 uppercase">Enterprise</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-medium">Floral Boutique Operations & Smart Billing Suite</p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Tabs -->
+                    <nav class="hidden md:flex items-center space-x-1.5 p-1.5 bg-midnight-900/90 rounded-2xl border border-slate-800 shadow-inner">
+                        <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 text-white bg-royalNavy-600 shadow-md">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Dashboard</span>
+                        </button>
+                        <button onclick="navigateTo('orders')" id="nav-orders" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+                            <i class="fa-solid fa-spa text-amberGold-400"></i>
+                            <span>Overall Flowers & Voice Entry</span>
+                        </button>
+                        <button onclick="navigateTo('analytics')" id="nav-analytics" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i>
+                            <span>Data Analytics</span>
+                        </button>
+                    </nav>
+
+                    <!-- Session Info & Logout -->
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden sm:flex flex-col text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                <span class="text-xs font-bold text-white tracking-wide">Administrator</span>
+                            </div>
+                            <span id="live-time-display" class="text-[10px] font-mono text-amberGold-400/90">00:00</span>
+                        </div>
+                        <button onclick="handleLogout()" title="Logout session" class="px-4 py-2 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white font-semibold text-xs rounded-xl shadow-lg shadow-rose-900/30 transition flex items-center gap-2">
+                            <i class="fa-solid fa-power-off"></i>
+                            <span class="hidden sm:inline">Logout</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Navigation Bar -->
+                <div class="flex md:hidden border-t border-slate-800 py-2.5 justify-around">
+                    <button onclick="navigateTo('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center text-xs font-bold text-amberGold-400">
+                        <i class="fa-solid fa-chart-pie text-base"></i>
+                        <span class="text-[10px] mt-0.5">Overview</span>
+                    </button>
+                    <button onclick="navigateTo('orders')" id="mob-nav-orders" class="flex flex-col items-center text-xs font-medium text-slate-400">
+                        <i class="fa-solid fa-spa text-base"></i>
+                        <span class="text-[10px] mt-0.5">Flowers Entry</span>
+                    </button>
+                    <button onclick="navigateTo('analytics')" id="mob-nav-analytics" class="flex flex-col items-center text-xs font-medium text-slate-400">
+                        <i class="fa-solid fa-chart-line text-base"></i>
+                        <span class="text-[10px] mt-0.5">Analytics</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== 1. LOGIN PAGE (STRICT SECURITY - ZERO HINTS) ==================== -->
+        <main id="view-login" class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <div class="w-full max-w-md">
+                <!-- Branding Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-tr from-amberGold-500 via-amberGold-400 to-royalNavy-600 shadow-2xl shadow-amberGold-500/25 text-3xl mb-3 text-midnight-950 font-black border-2 border-amberGold-300/40 animate-float-soft">
+                        🌻
+                    </div>
+                    <h1 class="heading-font text-3xl font-extrabold text-white tracking-tight">
+                        LUXURY <span class="text-amberGold-400">BLOOMS</span>
+                    </h1>
+                    <p class="text-xs font-medium text-slate-400 mt-1">
+                        Administrative Management & Voice POS Console
+                    </p>
+                </div>
+
+                <!-- Clean, Secure Login Card: Absolutely No Hints or Stored Samples -->
+                <div id="login-card" class="glass-panel-accent rounded-3xl p-8 shadow-2xl relative overflow-hidden border border-amberGold-500/30">
+                    <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-700/60">
+                        <div>
+                            <h2 class="text-lg font-bold text-white heading-font">Administrative Sign In</h2>
+                            <p class="text-xs text-slate-400">Please provide your authorized credentials</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-midnight-800 border border-amberGold-500/40 flex items-center justify-center text-amberGold-400 text-sm">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                    </div>
+
+                    <!-- Red Shake Alert -->
+                    <div id="login-error-alert" class="hidden mb-5 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-300 text-xs flex items-center gap-2.5">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-base"></i>
+                        <span id="login-error-msg">Invalid credentials. Please contact security admin.</span>
+                    </div>
+
+                    <!-- Strictly Username & Password only -->
+                    <form onsubmit="handleLoginSubmit(event)" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-amberGold-400 mb-2">
+                                Administrative Username
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                                <input type="text" id="login-username" required autocomplete="username" placeholder="Enter your administrative username"
+                                    class="w-full pl-10 pr-4 py-3 bg-midnight-950/90 border border-slate-700 focus:border-amberGold-400 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-amberGold-400/30 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-amberGold-400 mb-2">
+                                Password
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••"
+                                    class="w-full pl-10 pr-11 py-3 bg-midnight-950/90 border border-slate-700 focus:border-amberGold-400 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-amberGold-400/30 transition">
+                                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-amberGold-400 transition">
+                                    <i id="password-eye-icon" class="fa-solid fa-eye text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-login" class="w-full py-3.5 px-4 bg-gradient-to-r from-amberGold-500 via-amberGold-600 to-royalNavy-600 hover:from-amberGold-400 hover:to-royalNavy-500 text-midnight-950 font-black rounded-xl shadow-lg shadow-amberGold-500/20 transition-all transform active:scale-98 flex items-center justify-center gap-2">
+                            <span>SIGN IN TO PORTAL</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== 2. DASHBOARD VIEW ==================== -->
+        <main id="view-dashboard" class="hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl glass-panel-accent p-6 sm:p-8 border border-amberGold-500/30 shadow-2xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amberGold-500/15 text-amberGold-400 border border-amberGold-500/30 mb-3">
+                        <i class="fa-solid fa-crown text-amberGold-400"></i>
+                        Store Control Dashboard
+                    </span>
+                    <h1 class="heading-font text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                        Welcome Back, Rajesh! 🌻
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-2 font-normal leading-relaxed">
+                        உண்மையான வாடிக்கையாளர் பில்கள், உடனடி வரி ரசீது மற்றும் மேம்படுத்தப்பட்ட குரல் உள்ளீட்டு முறை (Voice POS) மூலம் உங்கள் மலர் கடையை எளிதாக மேலாண்மை செய்யுங்கள்.
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <button onclick="navigateTo('orders')" class="px-5 py-2.5 bg-gradient-to-r from-amberGold-400 to-amberGold-500 hover:from-amberGold-300 hover:to-amberGold-400 text-midnight-950 font-black rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amberGold-500/20 transition flex items-center gap-2">
+                            <i class="fa-solid fa-microphone"></i>
+                            <span>Smart Voice Order Entry</span>
+                        </button>
+                        <button onclick="navigateTo('analytics')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs tracking-wider border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-royalNavy-400"></i>
+                            <span>Store Analytics</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Metric Cards (Initial zero state) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-royalNavy-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
+                        <span>Total Bills Generated</span>
+                        <i class="fa-solid fa-receipt text-royalNavy-400 text-base"></i>
+                    </div>
+                    <div id="stat-total-orders" class="text-2xl sm:text-3xl font-extrabold text-white">0</div>
+                    <p class="text-[10px] text-slate-400 mt-1">Confirmed sequential bills</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-amberGold-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
+                        <span>Total Revenue</span>
+                        <i class="fa-solid fa-indian-rupee-sign text-amberGold-400 text-base"></i>
+                    </div>
+                    <div id="stat-total-revenue" class="text-2xl sm:text-3xl font-extrabold text-amberGold-400">₹0</div>
+                    <p class="text-[10px] text-slate-400 mt-1">Verified gross earnings</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-emerald-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
+                        <span>Total Flowers Sold</span>
+                        <i class="fa-solid fa-spa text-emerald-400 text-base"></i>
+                    </div>
+                    <div id="stat-total-qty" class="text-2xl sm:text-3xl font-extrabold text-white">0</div>
+                    <p class="text-[10px] text-slate-400 mt-1">Units & Garlands</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
+                        <span>Top Selling Flower</span>
+                        <i class="fa-solid fa-star text-purple-400 text-base"></i>
+                    </div>
+                    <div id="stat-top-item" class="text-sm sm:text-base font-bold text-slate-200 truncate">-</div>
+                    <p class="text-[10px] text-slate-400 mt-1">Client favorite blossom</p>
+                </div>
+            </div>
+
+            <!-- Recent Orders with Sequential Bill Numbers -->
+            <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-amberGold-400"></i>
+                        <span>Recent Confirmed Bills</span>
+                    </h3>
+                    <button onclick="navigateTo('orders')" class="text-xs font-semibold text-amberGold-400 hover:text-amberGold-300">
+                        View All Bills & Orders →
+                    </button>
+                </div>
+                <div id="dash-recent-container" class="overflow-x-auto">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== 3. OVERALL FLOWERS & SMART VOICE ENTRY ==================== -->
+        <main id="view-orders" class="hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div>
+                    <h1 class="heading-font text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amberGold-500 to-royalNavy-600 flex items-center justify-center text-lg text-midnight-950 font-black">
+                            🌸
+                        </span>
+                        <span>Overall Flowers & Order Registry</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                        வாடிக்கையாளர் பெயர், போன் எண், மலர் வகை, அளவு, விலை ஆகியவற்றை குரல் வழியாகவோ அல்லது மேனுவலாகவோ பதிவு செய்யவும்.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportOrdersToCSV()" class="px-4 py-2 bg-midnight-800 hover:bg-midnight-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-amberGold-400"></i>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SMART VOICE & MANUAL ENTRY CARD -->
+            <div class="glass-panel-accent rounded-3xl p-6 sm:p-8 border border-amberGold-500/30 shadow-2xl relative">
+
+                <!-- ALL-IN-ONE SMART VOICE BAR -->
+                <div class="bg-midnight-950/95 rounded-2xl p-4 sm:p-5 border border-slate-800 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="relative">
+                            <button id="btn-mic-toggle" onclick="toggleSpeechListener('all')" type="button" title="Master AI Smart Voice Fill"
+                                class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amberGold-500 to-amberGold-600 hover:from-amberGold-400 hover:to-amberGold-500 text-midnight-950 text-xl font-bold flex items-center justify-center shadow-lg shadow-amberGold-500/30 transition-all transform active:scale-95">
+                                <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                            </button>
+                            <div id="mic-waveform" class="hidden absolute -bottom-2 left-1/2 transform -translate-x-1/2 flex items-end gap-1 h-3 pointer-events-none">
+                                <span class="w-1 bg-amberGold-400 rounded-full animate-soundwave"></span>
+                                <span class="w-1 bg-royalNavy-400 rounded-full animate-soundwave" style="animation-delay: 0.2s"></span>
+                                <span class="w-1 bg-emerald-400 rounded-full animate-soundwave" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-white text-sm sm:text-base heading-font">🎙️ AI Smart Voice Fill</h4>
+                                <span id="voice-badge" class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">Ready</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                மைக் அழுத்தி முழு வாக்கியமாக பேசலாம்: <span class="text-amberGold-300 font-mono">"Name Rajesh phone 9876543210 item Red Roses quantity 5 price 1500"</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Live Real-Time Speech Feedback -->
+                    <div class="w-full md:max-w-md bg-midnight-900/95 px-4 py-2.5 rounded-xl border border-slate-700/80 flex items-center gap-3">
+                        <i class="fa-solid fa-wave-square text-amberGold-400 text-xs"></i>
+                        <div class="flex-1 overflow-hidden">
+                            <p class="text-[10px] text-slate-500 uppercase font-semibold">Live Speech Transcript</p>
+                            <p id="speech-live-text" class="text-xs text-slate-200 truncate italic">Press Mic to speak. Phone number & Flower items are automatically parsed!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM INPUTS WITH DEDICATED FIELD MIC BUTTONS -->
+                <form id="order-entry-form" onsubmit="handleSaveOrder(event)" class="space-y-5">
+                    <input type="hidden" id="entry-order-id" value="">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                        <!-- 1. Customer Name -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold uppercase text-amberGold-400">
+                                    1. Customer Name / பெயர் *
+                                </label>
+                                <button type="button" onclick="startSingleFieldVoice('order-cust-name')" title="Speak name only" class="text-xs text-slate-400 hover:text-amberGold-400 px-2 py-0.5 rounded bg-midnight-900 border border-slate-700 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-microphone text-[10px]"></i>
+                                    <span>Mic</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                                <input type="text" id="order-cust-name" required placeholder="e.g. Rajesh Kumar"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+
+                        <!-- 2. Phone Number (Guaranteed Accuracy) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold uppercase text-amberGold-400">
+                                    2. Phone Number / எண் (10 Digits) *
+                                </label>
+                                <button type="button" onclick="startSingleFieldVoice('order-cust-phone')" title="Speak 10-digit number" class="text-xs text-slate-400 hover:text-amberGold-400 px-2 py-0.5 rounded bg-midnight-900 border border-slate-700 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-microphone text-[10px]"></i>
+                                    <span>Mic</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                                    <i class="fa-solid fa-phone"></i>
+                                </span>
+                                <input type="tel" id="order-cust-phone" required placeholder="9876543210" pattern="[0-9]{10}" maxlength="10"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm font-mono text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+
+                        <!-- 3. Ordered Flower Item (Free-Form Text Input: Captures whatever you speak directly) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold uppercase text-amberGold-400">
+                                    3. Ordered Flower Item / மலர் வகை *
+                                </label>
+                                <button type="button" onclick="startSingleFieldVoice('order-cust-item')" title="Speak any flower/item name" class="text-xs text-slate-400 hover:text-amberGold-400 px-2 py-0.5 rounded bg-midnight-900 border border-slate-700 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-microphone text-[10px]"></i>
+                                    <span>Mic</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                                    <i class="fa-solid fa-spa"></i>
+                                </span>
+                                <input type="text" id="order-cust-item" required placeholder="Speak or type whatever item you want..."
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+
+                        <!-- 4. Quantity -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold uppercase text-amberGold-400">
+                                    4. Quantity / அளவு *
+                                </label>
+                                <button type="button" onclick="startSingleFieldVoice('order-cust-qty')" title="Speak quantity number" class="text-xs text-slate-400 hover:text-amberGold-400 px-2 py-0.5 rounded bg-midnight-900 border border-slate-700 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-microphone text-[10px]"></i>
+                                    <span>Mic</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                                    <i class="fa-solid fa-arrow-up-9-1"></i>
+                                </span>
+                                <input type="number" id="order-cust-qty" required min="1" value="1" placeholder="1"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+
+                        <!-- 5. Price in Rupees -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold uppercase text-amberGold-400">
+                                    5. Price (₹) / விலை (ரூபாய்) *
+                                </label>
+                                <button type="button" onclick="startSingleFieldVoice('order-cust-price')" title="Speak amount" class="text-xs text-slate-400 hover:text-amberGold-400 px-2 py-0.5 rounded bg-midnight-900 border border-slate-700 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-microphone text-[10px]"></i>
+                                    <span>Mic</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 font-bold">₹</span>
+                                <input type="number" id="order-cust-price" required min="1" step="any" placeholder="1500"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+
+                        <!-- 6. Date (Automatically displayed & auto-set) -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-amberGold-400 mb-1.5">
+                                6. Order Date / தேதி (Auto)
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                </span>
+                                <input type="date" id="order-cust-date" required
+                                    class="w-full pl-10 pr-4 py-2.5 bg-midnight-950/90 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-amberGold-400 focus:ring-1 focus:ring-amberGold-400 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                        <button type="button" onclick="resetOrderForm()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-xs tracking-wider transition">
+                            Clear Form
+                        </button>
+                        <button type="submit" id="btn-save-order" class="px-7 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-emerald-900/30 transition flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span id="save-btn-caption">💾 Save & Generate Bill</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ORDERS TABLE (WITH BILL NO & SERIAL NUMBER) -->
+            <div class="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-white text-base heading-font">
+                            Registered Orders & Bills Archive
+                        </h3>
+                        <span id="order-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amberGold-500/20 text-amberGold-400 border border-amberGold-500/30">
+                            0 Records
+                        </span>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-80">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="order-search-input" oninput="renderOrdersTable()" placeholder="Search by Bill No, Name, or Flower..."
+                            class="w-full pl-9 pr-4 py-2 bg-midnight-950/80 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amberGold-400">
+                    </div>
+                </div>
+
+                <!-- Table Wrapper -->
+                <div id="orders-table-wrapper" class="overflow-x-auto rounded-2xl border border-slate-800 bg-midnight-950/50">
+                    <!-- Dynamic Orders Content -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== 4. DATA ANALYTICS & INSIGHTS ==================== -->
+        <main id="view-analytics" class="hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div>
+                    <h1 class="heading-font text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amberGold-500 to-royalNavy-600 flex items-center justify-center text-lg text-midnight-950 font-black">
+                            📊
+                        </span>
+                        <span>Store Analytics & Client Intelligence</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                        தினசரி மற்றும் வாராந்திர விற்பனை, வாடிக்கையாளர்கள் விரும்பும் மலர்கள் மற்றும் VIP வாடிக்கையாளர் தரவரிசை.
+                    </p>
+                </div>
+                <div>
+                    <button onclick="renderAnalyticsView()" class="px-3.5 py-2 bg-midnight-800 hover:bg-midnight-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right text-amberGold-400"></i>
+                        <span>Refresh Metrics</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ANALYTICS CHARTS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Revenue Trajectory -->
+                <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-white text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-chart-area text-royalNavy-400"></i>
+                                <span>Sales Revenue Trend (₹)</span>
+                            </h3>
+                            <p class="text-[11px] text-slate-400">Daily and weekly gross comparison</p>
+                        </div>
+                        <span class="text-[11px] font-semibold px-2.5 py-1 bg-royalNavy-900/50 text-royalNavy-300 rounded-full border border-royalNavy-700">Trajectory</span>
+                    </div>
+                    <div class="h-64 sm:h-72 w-full relative">
+                        <canvas id="chart-revenue-trends"></canvas>
+                    </div>
+                </div>
+
+                <!-- Popular Blooms Breakdown -->
+                <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-white text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-pie-chart text-amberGold-400"></i>
+                                <span>Popular Bloom Distribution</span>
+                            </h3>
+                            <p class="text-[11px] text-slate-400">Customer flower preferences</p>
+                        </div>
+                        <span class="text-[11px] font-semibold px-2.5 py-1 bg-amberGold-950/60 text-amberGold-300 rounded-full border border-amberGold-700">Favorites</span>
+                    </div>
+                    <div class="h-64 sm:h-72 w-full flex items-center justify-center relative">
+                        <canvas id="chart-popular-blooms"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIP CLIENTS LEADERBOARD & SHOP UPGRADE INSIGHTS -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- VIP Leaderboard (2 Cols) -->
+                <div class="lg:col-span-2 glass-panel rounded-3xl p-6 border border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-white text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-crown text-amberGold-400"></i>
+                                <span>High-Value VIP Clients Roster</span>
+                            </h3>
+                            <p class="text-[11px] text-slate-400">அதிக முறை மற்றும் தொகைக்கு வாங்கிய முதன்மை வாடிக்கையாளர்கள்</p>
+                        </div>
+                        <span class="text-xs bg-amberGold-500/20 text-amberGold-300 font-bold px-3 py-1 rounded-xl border border-amberGold-500/30">VIP Leaderboard</span>
+                    </div>
+                    <div id="top-clients-wrapper" class="overflow-x-auto">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Practical Shop Upgrade Insights -->
+                <div class="glass-panel-accent rounded-3xl p-6 border border-amberGold-500/30 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-8 h-8 rounded-xl bg-amberGold-500/20 text-amberGold-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </span>
+                            <h3 class="font-bold text-white text-sm sm:text-base heading-font">Shop Growth Strategies</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                            உண்மையான ஆர்டர் தரவுகளிலிருந்து பெறப்பட்ட தொழில்முறை ஆலோசனைகள்:
+                        </p>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 bg-midnight-950/80 rounded-xl border border-slate-800">
+                                <span class="font-bold text-amberGold-400 flex items-center gap-1.5 mb-1">
+                                    <i class="fa-solid fa-receipt text-xs"></i> Instant Bill Sharing
+                                </span>
+                                <p class="text-slate-400">ஒவ்வொரு பில் எண்ணையும் (LB-XXXX) வாடிக்கையாளரின் போன் நம்பருக்கு WhatsApp மூலம் நேரடியாக அனுப்பலாம்.</p>
+                            </div>
+
+                            <div class="p-3 bg-midnight-950/80 rounded-xl border border-slate-800">
+                                <span class="font-bold text-royalNavy-400 flex items-center gap-1.5 mb-1">
+                                    <i class="fa-solid fa-boxes-stacked text-xs"></i> Stock Prediction
+                                </span>
+                                <p class="text-slate-400">அதிகம் விற்பனையாகும் மலர்களை (Roses, Jasmine) முன்கூட்டியே கணக்கிட்டு மொத்த விலையில் வாங்கி லாபத்தை உயர்த்தலாம்.</p>
+                            </div>
+
+                            <div class="p-3 bg-midnight-950/80 rounded-xl border border-slate-800">
+                                <span class="font-bold text-emerald-400 flex items-center gap-1.5 mb-1">
+                                    <i class="fa-solid fa-gem text-xs"></i> VIP Client Retention
+                                </span>
+                                <p class="text-slate-400">டாப் 5 VIP வாடிக்கையாளர்களின் விசேஷ நாட்களுக்கு வாழ்த்து மலர்கள் அனுப்பி நட்பை வலுப்படுத்தவும்.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 border-t border-slate-800 text-center">
+                        <span class="text-[11px] font-semibold text-slate-400 font-mono">
+                            ⚡ Powered by Luxury Blooms Engine
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-auto py-6 border-t border-slate-900 bg-midnight-950/90 text-center text-xs text-slate-500">
+            <p>© 2026 <strong>Luxury Blooms Enterprise</strong>. Built for Rajesh | Royal Navy Blue & Golden Amber Vibe 🌻</p>
+        </footer>
+    </div>
+
+    <!-- ==================== COMPLETE BUSINESS LOGIC & JAVASCRIPT ==================== -->
+    <script>
+        // Storage Keys
+        const STORAGE_KEY_AUTH = 'luxury_blooms_auth_v3';
+        const STORAGE_KEY_ORDERS = 'luxury_blooms_orders_v2';
+        const STORAGE_KEY_LAST_BILL = 'luxury_blooms_last_bill_counter';
+
+        // State (ZERO Mock data - starts strictly empty!)
+        let orders = [];
+        let revenueChart = null;
+        let popularChart = null;
+        let speechRecognition = null;
+        let isListening = false;
+        let currentVoiceTarget = 'all'; // 'all' or specific field ID
+
+        // Comprehensive Number Words to Digits Mapping (English, Multipliers & Tamil)
+        const NUMBER_WORDS_MAP = {
+            'zero': '0', 'oh': '0', 'o': '0', 'பூஜ்ஜியம்': '0',
+            'one': '1', 'ஒன்று': '1',
+            'two': '2', 'to': '2', 'too': '2', 'இரண்டு': '2',
+            'three': '3', 'மூன்று': '3',
+            'four': '4', 'for': '4', 'fore': '4', 'நான்கு': '4',
+            'five': '5', 'ஐந்து': '5',
+            'six': '6', 'ஆறு': '6',
+            'seven': '7', 'ஏழு': '7',
+            'eight': '8', 'ate': '8', 'எட்டு': '8',
+            'nine': '9', 'ஒன்பது': '9'
+        };
+
+        // --- 1. INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initParticleCanvas();
+            loadOrdersFromStorage();
+            initClock();
+            initDefaultOrderDate();
+            checkSessionAuth();
+            initSpeechEngine();
+        });
+
+        function initClock() {
+            function update() {
+                const now = new Date();
+                const clockEl = document.getElementById('live-time-display');
+                if (clockEl) {
+                    clockEl.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        function initDefaultOrderDate() {
+            const dateInput = document.getElementById('order-cust-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        // --- 2. AUTHENTICATION (PURE SECURITY, NO CREDENTIAL LEAKS) ---
+        function checkSessionAuth() {
+            const auth = localStorage.getItem(STORAGE_KEY_AUTH);
+            if (auth === 'active_rajesh_session') {
+                document.getElementById('main-header').classList.remove('hidden');
+                navigateTo('dashboard');
+            } else {
+                document.getElementById('main-header').classList.add('hidden');
+                showView('login');
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('login-password');
+            const eyeIcon = document.getElementById('password-eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value.trim();
+            const errorAlert = document.getElementById('login-error-alert');
+            const loginCard = document.getElementById('login-card');
+
+            // Strictly: Username === 'rajesh' and Password === 'blooms'
+            if (usernameInput.toLowerCase() === 'rajesh' && passwordInput === 'blooms') {
+                errorAlert.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY_AUTH, 'active_rajesh_session');
+                document.getElementById('main-header').classList.remove('hidden');
+                showToast('Welcome Rajesh! Authentication Successful.', 'success');
+                navigateTo('dashboard');
+            } else {
+                errorAlert.classList.remove('hidden');
+                document.getElementById('login-error-msg').innerText = 'Invalid credentials. Please contact security admin.';
+                loginCard.classList.remove('animate-shake');
+                void loginCard.offsetWidth; // retrigger shake
+                loginCard.classList.add('animate-shake');
+                showToast('Access Denied: Invalid credentials', 'error');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem(STORAGE_KEY_AUTH);
+            document.getElementById('main-header').classList.add('hidden');
+            if (speechRecognition && isListening) {
+                speechRecognition.stop();
+            }
+            showToast('Logged out securely.', 'info');
+            showView('login');
+            document.getElementById('login-password').value = '';
+        }
+
+        // --- 3. PAGE NAVIGATION ---
+        function navigateTo(viewId) {
+            showView(viewId);
+            updateNavTabs(viewId);
+
+            if (viewId === 'dashboard') {
+                updateDashboardView();
+            } else if (viewId === 'orders') {
+                renderOrdersTable();
+                initDefaultOrderDate();
+            } else if (viewId === 'analytics') {
+                renderAnalyticsView();
+            }
+        }
+
+        function showView(viewId) {
+            const views = ['login', 'dashboard', 'orders', 'analytics'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) {
+                    if (v === viewId) el.classList.remove('hidden');
+                    else el.classList.add('hidden');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavTabs(activeView) {
+            const tabs = ['dashboard', 'orders', 'analytics'];
+            tabs.forEach(t => {
+                const nav = document.getElementById(`nav-${t}`);
+                const mobNav = document.getElementById(`mob-nav-${t}`);
+                if (nav) {
+                    if (t === activeView) {
+                        nav.className = 'px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 text-white bg-royalNavy-600 shadow-md';
+                    } else {
+                        nav.className = 'px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800/60';
+                    }
+                }
+                if (mobNav) {
+                    if (t === activeView) {
+                        mobNav.className = 'flex flex-col items-center text-xs font-bold text-amberGold-400';
+                    } else {
+                        mobNav.className = 'flex flex-col items-center text-xs font-medium text-slate-400';
+                    }
+                }
+            });
+        }
+
+        // --- 4. DATA PERSISTENCE & SEQUENTIAL BILL NUMBER GENERATOR ---
+        function loadOrdersFromStorage() {
+            const raw = localStorage.getItem(STORAGE_KEY_ORDERS);
+            if (raw) {
+                try {
+                    orders = JSON.parse(raw);
+                } catch (e) {
+                    orders = [];
+                }
+            } else {
+                orders = [];
+            }
+        }
+
+        function saveOrdersToStorage() {
+            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+        }
+
+        function getNextSequentialBillNumber() {
+            let lastBill = parseInt(localStorage.getItem(STORAGE_KEY_LAST_BILL) || '1000', 10);
+            if (isNaN(lastBill) || lastBill < 1000) lastBill = 1000;
+            const nextBill = lastBill + 1;
+            localStorage.setItem(STORAGE_KEY_LAST_BILL, nextBill.toString());
+            return `LB-${nextBill}`;
+        }
+
+        function handleSaveOrder(e) {
+            e.preventDefault();
+            const editId = document.getElementById('entry-order-id').value;
+            const name = document.getElementById('order-cust-name').value.trim();
+            const phone = document.getElementById('order-cust-phone').value.trim();
+            const item = document.getElementById('order-cust-item').value.trim();
+            const qty = parseInt(document.getElementById('order-cust-qty').value, 10) || 1;
+            const price = parseFloat(document.getElementById('order-cust-price').value) || 0;
+            const date = document.getElementById('order-cust-date').value || new Date().toISOString().split('T')[0];
+
+            if (!name || !phone || !item) {
+                showToast('Please fill all mandatory fields (Name, Phone, Item)!', 'error');
+                return;
+            }
+
+            if (phone.length !== 10) {
+                showToast('Phone number must be exactly 10 digits!', 'error');
+                return;
+            }
+
+            if (editId) {
+                const idx = orders.findIndex(o => o.id === editId);
+                if (idx !== -1) {
+                    orders[idx] = { ...orders[idx], name, phone, item, qty, price, date };
+                    showToast(`Bill #${orders[idx].billNo} successfully updated!`, 'success');
+                }
+            } else {
+                // Generate next unique sequential bill number starting from LB-1001
+                const billNo = getNextSequentialBillNumber();
+                const newOrder = {
+                    id: 'ORDER_' + Date.now(),
+                    billNo: billNo,
+                    name,
+                    phone,
+                    item,
+                    qty,
+                    price,
+                    date,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                orders.unshift(newOrder);
+                showToast(`Order saved! Bill Generated: ${billNo} 💐`, 'success');
+                // Auto trigger printable tax invoice preview
+                openInvoiceModal(newOrder.id);
+            }
+
+            saveOrdersToStorage();
+            resetOrderForm();
+            renderOrdersTable();
+            updateDashboardView();
+        }
+
+        function resetOrderForm() {
+            document.getElementById('entry-order-id').value = '';
+            document.getElementById('order-cust-name').value = '';
+            document.getElementById('order-cust-phone').value = '';
+            document.getElementById('order-cust-item').value = '';
+            document.getElementById('order-cust-qty').value = '1';
+            document.getElementById('order-cust-price').value = '';
+            initDefaultOrderDate();
+            document.getElementById('save-btn-caption').innerText = '💾 Save & Generate Bill';
+
+            ['order-cust-name', 'order-cust-phone', 'order-cust-item', 'order-cust-qty', 'order-cust-price'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('field-recognized', 'field-listening');
+                }
+            });
+        }
+
+        function editOrder(orderId) {
+            const o = orders.find(x => x.id === orderId);
+            if (!o) return;
+            document.getElementById('entry-order-id').value = o.id;
+            document.getElementById('order-cust-name').value = o.name;
+            document.getElementById('order-cust-phone').value = o.phone;
+            document.getElementById('order-cust-item').value = o.item;
+            document.getElementById('order-cust-qty').value = o.qty;
+            document.getElementById('order-cust-price').value = o.price;
+            document.getElementById('order-cust-date').value = o.date;
+            document.getElementById('save-btn-caption').innerText = `Update Bill ${o.billNo}`;
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+            showToast(`Editing Bill ${o.billNo}`, 'info');
+        }
+
+        function deleteOrder(orderId) {
+            const target = orders.find(o => o.id === orderId);
+            const bill = target ? target.billNo : '';
+            orders = orders.filter(o => o.id !== orderId);
+            saveOrdersToStorage();
+            renderOrdersTable();
+            updateDashboardView();
+            showToast(`Bill ${bill} has been deleted.`, 'info');
+        }
+
+        // --- 5. RENDER ORDERS REGISTRY (BILL NO & SEQUENTIAL SERIAL NO) ---
+        function renderOrdersTable() {
+            const wrapper = document.getElementById('orders-table-wrapper');
+            const searchVal = (document.getElementById('order-search-input')?.value || '').toLowerCase().trim();
+            const badge = document.getElementById('order-count-badge');
+
+            const filtered = orders.filter(o =>
+                (o.billNo && o.billNo.toLowerCase().includes(searchVal)) ||
+                o.name.toLowerCase().includes(searchVal) ||
+                o.phone.toLowerCase().includes(searchVal) ||
+                o.item.toLowerCase().includes(searchVal)
+            );
+
+            if (badge) badge.innerText = `${filtered.length} Bills`;
+
+            if (filtered.length === 0) {
+                wrapper.innerHTML = `
+                    <div class="py-14 px-4 text-center">
+                        <div class="w-16 h-16 mx-auto rounded-3xl bg-midnight-900 border border-slate-800 flex items-center justify-center text-3xl text-amberGold-400 mb-3 shadow-inner">
+                            🌻
+                        </div>
+                        <h4 class="text-white font-bold text-sm">No orders recorded yet</h4>
+                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                            Use manual or voice entry above to record your first sale. All bills will be numbered automatically.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            wrapper.innerHTML = `
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-midnight-900 text-amberGold-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-800">
+                        <tr>
+                            <th class="p-3.5 text-center">Serial No</th>
+                            <th class="p-3.5">Bill Number</th>
+                            <th class="p-3.5">Date</th>
+                            <th class="p-3.5">Customer Name</th>
+                            <th class="p-3.5">Phone Number</th>
+                            <th class="p-3.5">Ordered Flower</th>
+                            <th class="p-3.5 text-center">Qty</th>
+                            <th class="p-3.5 text-right">Price (₹)</th>
+                            <th class="p-3.5 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        ${filtered.map((o, idx) => `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3.5 text-center font-mono font-bold text-royalNavy-400">#${filtered.length - idx}</td>
+                                <td class="p-3.5 font-mono font-black text-amberGold-400">
+                                    <span class="px-2.5 py-1 rounded-lg bg-amberGold-500/15 border border-amberGold-500/30">${escapeHTML(o.billNo || 'LB-1001')}</span>
+                                </td>
+                                <td class="p-3.5 font-mono text-[11px] text-slate-400 whitespace-nowrap">${escapeHTML(o.date)}</td>
+                                <td class="p-3.5 font-bold text-white">${escapeHTML(o.name)}</td>
+                                <td class="p-3.5 font-mono text-slate-300 font-semibold">${escapeHTML(o.phone)}</td>
+                                <td class="p-3.5 font-medium text-emerald-400">${escapeHTML(o.item)}</td>
+                                <td class="p-3.5 text-center font-bold text-white">${o.qty}</td>
+                                <td class="p-3.5 text-right font-black text-amberGold-400">₹${Number(o.price).toLocaleString('en-IN')}</td>
+                                <td class="p-3.5 text-center whitespace-nowrap">
+                                    <button onclick="openInvoiceModal('${o.id}')" title="View & Print Bill" class="p-2 text-amberGold-400 hover:bg-amberGold-400/15 rounded-lg mr-1 transition">
+                                        <i class="fa-solid fa-receipt"></i>
+                                    </button>
+                                    <button onclick="editOrder('${o.id}')" title="Edit Order" class="p-2 text-royalNavy-400 hover:bg-royalNavy-400/15 rounded-lg mr-1 transition">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button onclick="deleteOrder('${o.id}')" title="Delete" class="p-2 text-rose-400 hover:bg-rose-400/15 rounded-lg transition">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // --- 6. VOICE RECOGNITION (ACCURATE PHONE & ITEM EXTRACTION) ---
+        function initSpeechEngine() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                const liveEl = document.getElementById('speech-live-text');
+                if (liveEl) liveEl.innerText = 'Speech recognition requires Google Chrome or Chromium browser.';
+                const micBtn = document.getElementById('btn-mic-toggle');
+                if (micBtn) micBtn.disabled = true;
+                return;
+            }
+
+            speechRecognition = new SpeechRec();
+            speechRecognition.continuous = true;
+            speechRecognition.interimResults = true;
+            speechRecognition.lang = 'en-IN'; // Robust support for Indian English & mixed accents
+
+            speechRecognition.onstart = () => {
+                isListening = true;
+                updateVoiceStatus(true);
+            };
+
+            speechRecognition.onresult = (event) => {
+                let interim = '';
+                let final = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        final += event.results[i][0].transcript;
+                    } else {
+                        interim += event.results[i][0].transcript;
+                    }
+                }
+
+                const live = final || interim;
+                document.getElementById('speech-live-text').innerText = `"${live}"`;
+
+                if (final) {
+                    if (currentVoiceTarget === 'all') {
+                        parseComprehensiveSpeech(final);
+                    } else {
+                        parseSingleFieldSpeech(currentVoiceTarget, final);
+                    }
+                }
+            };
+
+            speechRecognition.onerror = (e) => {
+                console.warn('Speech engine:', e.error);
+                updateVoiceStatus(false);
+            };
+
+            speechRecognition.onend = () => {
+                isListening = false;
+                updateVoiceStatus(false);
+            };
+        }
+
+        function toggleSpeechListener(target = 'all') {
+            currentVoiceTarget = target;
+            if (!speechRecognition) initSpeechEngine();
+            if (!speechRecognition) return;
+
+            if (isListening) {
+                speechRecognition.stop();
+            } else {
+                try {
+                    speechRecognition.start();
+                } catch (err) {
+                    console.error('Speech start error:', err);
+                }
+            }
+        }
+
+        function startSingleFieldVoice(fieldId) {
+            currentVoiceTarget = fieldId;
+            const input = document.getElementById(fieldId);
+            if (input) {
+                input.focus();
+                input.classList.add('field-listening');
+            }
+            if (!speechRecognition) initSpeechEngine();
+            if (speechRecognition) {
+                if (isListening) speechRecognition.stop();
+                setTimeout(() => {
+                    try {
+                        speechRecognition.start();
+                        const fieldName = fieldId.replace('order-cust-', '').toUpperCase();
+                        showToast(`Listening for: ${fieldName}...`, 'info');
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }, 200);
+            }
+        }
+
+        function updateVoiceStatus(active) {
+            const micBtn = document.getElementById('btn-mic-toggle');
+            const wave = document.getElementById('mic-waveform');
+            const badge = document.getElementById('voice-badge');
+
+            if (active) {
+                micBtn.classList.add('bg-rose-600', 'animate-pulse');
+                micBtn.classList.remove('bg-gradient-to-tr');
+                wave.classList.remove('hidden');
+                badge.className = 'text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-rose-900/60 text-rose-300 border border-rose-500 animate-pulse';
+                badge.innerText = 'Listening Now';
+            } else {
+                micBtn.classList.remove('bg-rose-600', 'animate-pulse');
+                micBtn.classList.add('bg-gradient-to-tr');
+                wave.classList.add('hidden');
+                badge.className = 'text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+                badge.innerText = 'Ready';
+            }
+        }
+
+        // Convert spoken number words ("double nine", "nine eight seven...") to digits
+        function convertWordNumbersToDigits(text) {
+            let processed = text.toLowerCase();
+
+            // Handle "double X" -> "XX", "triple X" -> "XXX"
+            processed = processed.replace(/\bdouble\s+(\w+)\b/g, '$1 $1');
+            processed = processed.replace(/\btriple\s+(\w+)\b/g, '$1 $1 $1');
+
+            for (const [word, digit] of Object.entries(NUMBER_WORDS_MAP)) {
+                const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                processed = processed.replace(regex, digit);
+            }
+            return processed;
+        }
+
+        // Main Parser: Accurately identifies Phone, Item (Direct Free-Form), Name, Quantity, Price
+        function parseComprehensiveSpeech(rawText) {
+            const normalizedText = convertWordNumbersToDigits(rawText);
+            const lower = normalizedText.toLowerCase();
+            let recognized = [];
+
+            // 1. PHONE NUMBER DETECTION (Converts words, captures 10 digits accurately)
+            let detectedPhone = '';
+            const directTen = normalizedText.match(/\b\d{10}\b/);
+            if (directTen) {
+                detectedPhone = directTen[0];
+            } else {
+                const phoneKeywordMatch = normalizedText.match(/(?:phone|mobile|cell|number|contact)\s*[:is]?\s*([0-9\s]{10,20})/i);
+                if (phoneKeywordMatch) {
+                    const digits = phoneKeywordMatch[1].replace(/\D/g, '');
+                    if (digits.length >= 10) detectedPhone = digits.slice(0, 10);
+                } else {
+                    const allDigits = normalizedText.replace(/\D/g, '');
+                    if (allDigits.length === 10) {
+                        detectedPhone = allDigits;
+                    }
+                }
+            }
+
+            if (detectedPhone && detectedPhone.length === 10) {
+                highlightAndSet('order-cust-phone', detectedPhone);
+                recognized.push('Phone: ' + detectedPhone);
+            }
+
+            // 2. ITEM / FLOWER DETECTION (PURE DYNAMIC USER SPEECH - ZERO PREDEFINED RESTRICTIONS)
+            let detectedItem = '';
+            // Capture whatever the user states after keywords: item, flower, product, or ordered
+            const dynamicItemMatch = rawText.match(/(?:item|flower|ordered|product|மலர்|பொருள்)\s*(?:is|name|value)?\s*[:\-]?\s*([a-zA-Z0-9\u0B80-\u0BFF\s]+?)(?=\s+(?:quantity|qty|count|price|rate|rupees|amount|phone|mobile|date|$))/i);
+            if (dynamicItemMatch && dynamicItemMatch[1].trim().length > 1) {
+                detectedItem = dynamicItemMatch[1].trim();
+            }
+
+            if (detectedItem) {
+                highlightAndSet('order-cust-item', detectedItem);
+                recognized.push('Item: ' + detectedItem);
+            }
+
+            // 3. QUANTITY DETECTION
+            const qtyMatch = lower.match(/(?:quantity|qty|count|pieces|nos?|bunches)\s*(?:is|of)?\s*(\d+)/i) ||
+                             lower.match(/(\d+)\s*(?:pieces|nos|bouquets?|bunches|packs?|garlands?)/i);
+            if (qtyMatch) {
+                const q = parseInt(qtyMatch[1], 10);
+                if (q > 0) {
+                    highlightAndSet('order-cust-qty', q);
+                    recognized.push('Qty: ' + q);
+                }
+            }
+
+            // 4. PRICE DETECTION
+            const priceMatch = lower.match(/(?:price|amount|rupees|rs|cost|rate)\s*(?:is)?\s*(\d+)/i) ||
+                               lower.match(/(?:for|worth)\s*(\d+)\s*(?:rupees|rs)?/i);
+            if (priceMatch) {
+                const p = parseFloat(priceMatch[1]);
+                if (p > 0) {
+                    highlightAndSet('order-cust-price', p);
+                    recognized.push('Price: ₹' + p);
+                }
+            }
+
+            // 5. CUSTOMER NAME DETECTION
+            const nameMatch = rawText.match(/(?:name|customer|client|பெயர்)\s*(?:is)?\s*[:\-]?\s*([A-Za-z\u0B80-\u0BFF\s]+?)(?=\s+(?:phone|mobile|item|flower|quantity|qty|price|amount|rs|rupees|$))/i);
+            if (nameMatch && nameMatch[1].trim()) {
+                const extractedName = nameMatch[1].trim();
+                highlightAndSet('order-cust-name', extractedName);
+                recognized.push('Name: ' + extractedName);
+            }
+
+            // Ensure auto-date is set
+            initDefaultOrderDate();
+
+            if (recognized.length > 0) {
+                showToast(`Voice Extracted: ${recognized.join(' | ')} ✅`, 'success');
+            }
+        }
+
+        // Single field speech handler - Whatever is spoken is directly pasted into that field
+        function parseSingleFieldSpeech(fieldId, text) {
+            const clean = text.trim();
+            const normalized = convertWordNumbersToDigits(clean);
+
+            if (fieldId === 'order-cust-phone') {
+                const digits = normalized.replace(/\D/g, '');
+                if (digits.length >= 10) {
+                    highlightAndSet(fieldId, digits.slice(0, 10));
+                    showToast('Phone recognized: ' + digits.slice(0, 10), 'success');
+                } else {
+                    highlightAndSet(fieldId, digits);
+                }
+            } else if (fieldId === 'order-cust-item') {
+                // Remove prefixes like "item" or "flower" if spoken by habit, and set whatever words spoken
+                let flowerSpoken = clean.replace(/^(?:item|flower|மலர்)\s*(?:is)?\s*/i, '').trim();
+                highlightAndSet(fieldId, flowerSpoken || clean);
+                showToast('Item recognized: ' + (flowerSpoken || clean), 'success');
+            } else if (fieldId === 'order-cust-qty') {
+                const num = normalized.replace(/\D/g, '');
+                if (num) highlightAndSet(fieldId, parseInt(num, 10));
+            } else if (fieldId === 'order-cust-price') {
+                const num = normalized.replace(/\D/g, '');
+                if (num) highlightAndSet(fieldId, parseFloat(num));
+            } else {
+                highlightAndSet(fieldId, clean);
+            }
+
+            currentVoiceTarget = 'all'; // Reset to master
+        }
+
+        function highlightAndSet(elementId, value) {
+            const input = document.getElementById(elementId);
+            if (!input) return;
+            input.value = value;
+            input.classList.remove('field-listening');
+            input.classList.add('field-recognized');
+            setTimeout(() => {
+                input.classList.remove('field-recognized');
+            }, 3000);
+        }
+
+        // --- 7. DASHBOARD METRICS ---
+        function updateDashboardView() {
+            const totalOrders = orders.length;
+            const totalRev = orders.reduce((acc, o) => acc + (Number(o.price) || 0), 0);
+            const totalQuantity = orders.reduce((acc, o) => acc + (Number(o.qty) || 0), 0);
+
+            // Calculate Best Seller
+            const counts = {};
+            orders.forEach(o => {
+                counts[o.item] = (counts[o.item] || 0) + (Number(o.qty) || 1);
+            });
+            let topItem = '-';
+            let maxCount = 0;
+            for (const key in counts) {
+                if (counts[key] > maxCount) {
+                    maxCount = counts[key];
+                    topItem = key;
+                }
+            }
+
+            document.getElementById('stat-total-orders').innerText = totalOrders;
+            document.getElementById('stat-total-revenue').innerText = '₹' + totalRev.toLocaleString('en-IN');
+            document.getElementById('stat-total-qty').innerText = totalQuantity;
+            document.getElementById('stat-top-item').innerText = topItem;
+
+            // Render Recent 4 Bills
+            const recentContainer = document.getElementById('dash-recent-container');
+            if (orders.length === 0) {
+                recentContainer.innerHTML = `
+                    <div class="py-6 text-center text-slate-500 text-xs">
+                        No orders recorded yet. Add an order to view live store statistics.
+                    </div>
+                `;
+            } else {
+                const recents = orders.slice(0, 4);
+                recentContainer.innerHTML = `
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-midnight-950 text-slate-400 font-bold uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3">Bill No</th>
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Customer</th>
+                                <th class="p-3">Phone</th>
+                                <th class="p-3">Item</th>
+                                <th class="p-3 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            ${recents.map(r => `
+                                <tr class="hover:bg-slate-800/40">
+                                    <td class="p-3 font-mono font-black text-amberGold-400">${escapeHTML(r.billNo || 'LB-1001')}</td>
+                                    <td class="p-3 font-mono text-slate-400">${escapeHTML(r.date)}</td>
+                                    <td class="p-3 font-bold text-white">${escapeHTML(r.name)}</td>
+                                    <td class="p-3 font-mono text-slate-300">${escapeHTML(r.phone)}</td>
+                                    <td class="p-3 text-emerald-400">${escapeHTML(r.item)}</td>
+                                    <td class="p-3 text-right font-black text-amberGold-400">₹${Number(r.price).toLocaleString('en-IN')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        // --- 8. DATA ANALYTICS & CHARTS ---
+        function renderAnalyticsView() {
+            renderRevenueChart();
+            renderPopularBloomsChart();
+            renderTopClientsLeaderboard();
+        }
+
+        function renderRevenueChart() {
+            const ctx = document.getElementById('chart-revenue-trends').getContext('2d');
+
+            const dateMap = {};
+            orders.forEach(o => {
+                dateMap[o.date] = (dateMap[o.date] || 0) + (Number(o.price) || 0);
+            });
+
+            let labels = Object.keys(dateMap).sort();
+            let data = labels.map(l => dateMap[l]);
+
+            if (labels.length === 0) {
+                labels = ['No Orders Yet'];
+                data = [0];
+            }
+
+            if (revenueChart) revenueChart.destroy();
+
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data,
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#2563EB',
+                        pointBorderColor: '#FFFFFF',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ` Revenue: ₹${Number(ctx.raw).toLocaleString('en-IN')}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#94a3b8', callback: v => '₹' + v },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPopularBloomsChart() {
+            const ctx = document.getElementById('chart-popular-blooms').getContext('2d');
+
+            const itemMap = {};
+            orders.forEach(o => {
+                const short = o.item.split(' ')[0] + ' ' + (o.item.split(' ')[1] || '');
+                itemMap[short] = (itemMap[short] || 0) + (Number(o.qty) || 1);
+            });
+
+            let labels = Object.keys(itemMap);
+            let data = Object.values(itemMap);
+
+            if (labels.length === 0) {
+                labels = ['No Data Yet'];
+                data = [1];
+            }
+
+            if (popularChart) popularChart.destroy();
+
+            popularChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#F59E0B', '#2563EB', '#10B981', '#EC4899', '#8B5CF6', '#06B6D4'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0A1128'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#cbd5e1', font: { size: 11 }, boxWidth: 12 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTopClientsLeaderboard() {
+            const wrapper = document.getElementById('top-clients-wrapper');
+
+            const clientMap = {};
+            orders.forEach(o => {
+                const key = (o.phone || o.name).trim();
+                if (!clientMap[key]) {
+                    clientMap[key] = {
+                        name: o.name,
+                        phone: o.phone,
+                        ordersCount: 0,
+                        totalFlowers: 0,
+                        totalSpent: 0
+                    };
+                }
+                clientMap[key].ordersCount += 1;
+                clientMap[key].totalFlowers += (Number(o.qty) || 1);
+                clientMap[key].totalSpent += (Number(o.price) || 0);
+            });
+
+            const sorted = Object.values(clientMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+            if (sorted.length === 0) {
+                wrapper.innerHTML = `
+                    <div class="py-8 text-center text-slate-500 text-xs">
+                        வாடிக்கையாளர் தரவு எதுவும் இல்லை. முதல் ஆர்டரை பதிவு செய்த பின் VIP தரவரிசை தோன்றும்.
+                    </div>
+                `;
+                return;
+            }
+
+            wrapper.innerHTML = `
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-midnight-950 text-amberGold-400 uppercase text-[10px]">
+                        <tr>
+                            <th class="p-3">Rank</th>
+                            <th class="p-3">Client</th>
+                            <th class="p-3">Phone</th>
+                            <th class="p-3 text-center">Bills</th>
+                            <th class="p-3 text-center">Flowers</th>
+                            <th class="p-3 text-right">Total Spent (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        ${sorted.slice(0, 5).map((c, i) => `
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="p-3 font-bold">${i === 0 ? '👑 #1 VIP' : `#${i + 1}`}</td>
+                                <td class="p-3 font-bold text-white">${escapeHTML(c.name)}</td>
+                                <td class="p-3 font-mono text-slate-300">${escapeHTML(c.phone)}</td>
+                                <td class="p-3 text-center font-bold text-royalNavy-400">${c.ordersCount}</td>
+                                <td class="p-3 text-center">${c.totalFlowers}</td>
+                                <td class="p-3 text-right font-black text-amberGold-400">₹${c.totalSpent.toLocaleString('en-IN')}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // --- 9. INVOICE MODAL (BILL NO & SERIAL NUMBER DISPLAY) ---
+        function openInvoiceModal(orderId) {
+            const o = orders.find(x => x.id === orderId);
+            if (!o) return;
+            const index = orders.findIndex(x => x.id === orderId);
+            const serialNo = orders.length - index;
+
+            document.getElementById('modal-bill-no').innerText = `Bill No: ${o.billNo || 'LB-1001'}`;
+            document.getElementById('modal-serial-no').innerText = `S.No #${serialNo < 10 ? '0' + serialNo : serialNo}`;
+            document.getElementById('modal-bill-date').innerText = `${o.date} ${o.time ? '| ' + o.time : ''}`;
+            document.getElementById('modal-bill-client').innerText = o.name;
+            document.getElementById('modal-bill-phone').innerText = o.phone;
+            document.getElementById('modal-bill-item').innerText = o.item;
+            document.getElementById('modal-bill-qty').innerText = `${o.qty} units`;
+            document.getElementById('modal-bill-item-total').innerText = `₹${Number(o.price).toLocaleString('en-IN')}`;
+            document.getElementById('modal-bill-grand-total').innerText = `₹${Number(o.price).toLocaleString('en-IN')}`;
+
+            document.getElementById('invoice-modal').classList.remove('hidden');
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoice-modal').classList.add('hidden');
+        }
+
+        // --- 10. CSV EXPORT ---
+        function exportOrdersToCSV() {
+            if (orders.length === 0) {
+                showToast('No orders recorded to export!', 'error');
+                return;
+            }
+            let csv = 'Serial No,Bill No,Date,Customer Name,Phone,Item,Quantity,Price (INR)\n';
+            orders.forEach((o, i) => {
+                const sNo = orders.length - i;
+                csv += `"${sNo}","${o.billNo || 'LB-1001'}","${o.date}","${o.name}","${o.phone}","${o.item}",${o.qty},${o.price}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `LuxuryBlooms_Bills_${new Date().toISOString().split('T')[0]}.csv`);
+            a.click();
+            showToast('Orders & Bills exported successfully! 📑', 'success');
+        }
+
+        // --- 11. TOAST ALERTS & PARTICLES ---
+        function showToast(msg, type = 'info') {
+            const wrapper = document.getElementById('toast-wrapper');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-2xl shadow-2xl border text-xs font-semibold flex items-center gap-3 transform translate-y-2 transition-all duration-300 pointer-events-auto ${
+                type === 'error'
+                    ? 'bg-rose-950/95 text-rose-200 border-rose-500/50'
+                    : type === 'success'
+                    ? 'bg-emerald-950/95 text-emerald-200 border-emerald-500/50'
+                    : 'bg-midnight-900/95 text-amberGold-300 border-amberGold-500/50'
+            }`;
+
+            const icon = type === 'error' ? 'fa-circle-xmark text-rose-400' : type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-bell text-amberGold-400';
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${escapeHTML(msg)}</span>`;
+            wrapper.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 400);
+            }, 3200);
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        function initParticleCanvas() {
+            const container = document.getElementById('particle-canvas');
+            const icons = ['🌸', '✨', '🌼', '💎', '🌿', '🌻'];
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('div');
+                el.innerText = icons[Math.floor(Math.random() * icons.length)];
+                el.style.position = 'absolute';
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = Math.random() * 100 + 'vh';
+                el.style.fontSize = (12 + Math.random() * 16) + 'px';
+                el.style.opacity = (0.07 + Math.random() * 0.12).toString();
+                el.style.animation = `floatSoft ${7 + Math.random() * 8}s infinite ease-in-out`;
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(el);
+            }
+        }
+    </script>
+</body>
+</html>
